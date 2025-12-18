@@ -2,7 +2,7 @@
 * https://www.packtpub.com/en-us/product/mastering-go-for-devops-9781837027323?srsltid=AfmBOorbKbHa0CqSS8IxKP3EZn9c5XCNBTdOfPPNDACEtjCY8wfaCp9K
 
 
-![cover images](https://content.packt.com/_/image/original/B32071/cover_image.jpg?version=1766044828)
+![cover images](https://content.packt.com/_/image/original/B32071/cover_image.jpg)
 
 
 
