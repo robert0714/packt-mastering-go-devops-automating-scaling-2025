@@ -1,0 +1,103 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Exception: Keep third_party runtime libraries for Docker builds
+!third_party/*.so
+!third_party/*.dll
+!third_party/*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+coverage.txt
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+qrdet
+qrdet-json
+visualize
+api-server
+*.exe
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+
+# Docker
+.dockerignore
+
+# Test results
+test-results/
+
+# Swagger generated files (keep docs/ but ignore old swagger files in root)
+/swagger.yaml
+/swagger.json
+/docs.go
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# API test responses
+response*.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Generated files
+*_generated.go
+
+# Local configuration
+config.local.*
+
+# Data directories that might be created during testing
+data/
+output/
+
+#
+bin/
+
+# go build -o bin\visualize.exe cmd\visualize\main.go ; ./build/qrdet.exe "samples\一張_山隆1.jpg"
+detection_visualization.jpg
+
+
+qr_regions
+openapi-3.0.json
+openapi-3.1-original.json
+
+
+sr_debug

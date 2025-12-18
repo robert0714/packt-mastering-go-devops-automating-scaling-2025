@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+  - job_name: 'instrument-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 15s # This can be adjusted based on our needs
+    static_configs:
+      # - targets: ['instrument:8181']
+      - targets: ['host.docker.internal:8181']
+  - job_name: 'login-api-service'
+    metrics_path: '/api/aggregate/auth/v1/actuator/prometheus'
+    scrape_interval: 15s # This can be adjusted based on our needs
+    static_configs:
+      # - targets: ['login-api:8083']
+      - targets: ['host.docker.internal:8083']      
+  - job_name: 'edge-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 15s # This can be adjusted based on our needs
+    static_configs:
+      # - targets: ['edge:8182']
+      - targets: ['host.docker.internal:8182']    
+  - job_name: 'keycloak-service'
+    metrics_path: '/auth/metrics'
+    scrape_interval: 15s # This can be adjusted based on our needs
+    static_configs:
+      - targets: ['keycloak:8080']      
