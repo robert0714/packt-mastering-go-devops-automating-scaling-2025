@@ -1,0 +1,51 @@
+syntax = "proto3";
+package urlshortener;
+option go_package = "url-shortener/proto;proto";
+// Define the URL shortening service
+service URLShortener {
+  // A simple request-response to shorten a single URL
+  rpc ShortenURL (ShortenRequest) returns (ShortenResponse);
+
+  // Fetches the original URL from a shortened one
+  rpc GetOriginalURL (GetRequest) returns (GetResponse);
+
+  // Server-side streaming to return a list of all shortened URLs
+  rpc ListShortenedURLs (ListRequest) returns (stream ShortenResponse);
+
+  // Client-side streaming to shorten multiple URLs in one request
+  rpc BatchShortenURLs (stream ShortenRequest) returns (BatchResponse);
+
+  // Bidirectional streaming to monitor URL statistics in real-time
+  rpc MonitorURLStats (stream StatsRequest) returns (stream StatsResponse);
+}
+// Request to shorten a URL
+message ShortenRequest {
+  string original_url = 1;
+}
+// Response with shortened URL
+message ShortenResponse {
+  string short_url = 1;
+}
+// Request to retrieve original URL
+message GetRequest {
+  string short_url = 1;
+}
+// Response with original URL
+message GetResponse {
+  string original_url = 1;
+}
+// Request for listing URLs
+message ListRequest {}
+// Response with list of shortened URLs
+message BatchResponse {
+  int32 count = 1;
+}
+// Request for URL statistics
+message StatsRequest {
+  string short_url = 1;
+}
+// Response with URL stats
+message StatsResponse {
+  string short_url = 1;
+  int32 clicks = 2;
+}
