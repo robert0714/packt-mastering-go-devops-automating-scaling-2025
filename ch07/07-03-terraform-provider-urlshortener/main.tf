@@ -1,0 +1,23 @@
+terraform {
+  required_providers {
+    urlshortener = {
+      source  = "local/urlshortener" 
+      version = "0.1.0" 
+    }
+  }
+}
+
+provider "urlshortener" {
+  
+  
+}
+
+# This is the Create and Read test:
+resource "urlshortener" "example" {
+  long_url = "https://example.com"
+}
+
+# This is the Update test:
+resource "urlshortener" "example_update" {
+  long_url = "https://example2.com"
+}

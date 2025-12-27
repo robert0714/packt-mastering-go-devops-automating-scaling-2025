@@ -387,7 +387,7 @@ func main() {
     server.Serve(lis)
 }
 ```
-If Prometheus is used for observability, we can integrate metrics using the go-grpc-middleware ecosystem. It provides out-of-the-box middleware for logging, monitoring, authentication, and more. For example, we can add a Prometheus interceptor like this:
+If Prometheus is used for observability, we can integrate metrics using the `go-grpc-middleware` ecosystem. It provides out-of-the-box middleware for logging, monitoring, authentication, and more. For example, we can add a Prometheus interceptor like this:
 ```golang
 import (
     grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
