@@ -17,8 +17,10 @@ jobs:
           go-version: '1.24'
       - name: Run go tests
         run: |
-          go test ./ch07/07-03-terraform-provider-urlshortener
-
+          cd ./ch07/07-03-terraform-provider-urlshortener
+          go mod tidy  
+          cd internal  
+          go test -v
   terraform-acceptance:
     runs-on: ubuntu-latest
     needs: test
