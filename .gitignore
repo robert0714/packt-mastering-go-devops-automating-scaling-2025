@@ -101,3 +101,24 @@ openapi-3.1-original.json
 
 
 sr_debug
+
+# Terraform / local provider test artifacts
+# Ignore local terraform workspace folders and lock files created during testing
+.terraform/
+.terraform.lock.hcl
+
+# Local test plugin directories (example: tf-test/plugins)
+tf-test/plugins/
+
+# Example local test workspace files
+tf-test/cli.hcl
+tf-test/store.json
+tf-test/.terraform/
+
+# Provider binaries built during development (keep source only)
+**/terraform-provider-*
+**/terraform-provider-*.exe
+
+# Terraform state files for local tests
+tf-test/*.tfstate
+tf-test/*.tfstate.backup
