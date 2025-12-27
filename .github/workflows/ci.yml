@@ -33,15 +33,26 @@ jobs:
       - name: Build provider (linux_amd64)
         run: |
           set -e
-          mkdir -p tf-test/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64
-          GOOS=linux GOARCH=amd64 go build -o tf-test/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64/terraform-provider-local-urlshortener_v0.0.1 ./ch07/07-03-terraform-provider-urlshortener
-      - name: Install Terraform
+          echo $GITHUB_WORKSPACE 
+          mkdir -p $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64
+          cd ./ch07/07-03-terraform-provider-urlshortener
+          go mod tidy  
+          GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/terraform-provider-local-urlshortener_v0.0.1 .
+          
+          cat <<EOF > cli.hcl
+          provider_installation {
+            dev_overrides {
+              "local/urlshortener"   = "$GITHUB_WORKSPACE/plugins"
+            }
+            direct {}
+          }
+          EOF
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.9
       - name: Run terraform init
         working-directory: tf-test
-        run: terraform init -plugin-dir=plugins -input=false
+        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform init -input=false
       - name: Run terraform apply
         working-directory: tf-test
-        run: terraform apply -auto-approve
+        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform apply -auto-approve
