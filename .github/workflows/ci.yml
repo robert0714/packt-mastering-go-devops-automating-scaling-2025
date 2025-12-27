@@ -50,7 +50,7 @@ jobs:
       - name: Install Terraform    
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.9
+          terraform_version: "1.14.3"
       - name: Run terraform init
         working-directory: tf-test
         run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform init -input=false
