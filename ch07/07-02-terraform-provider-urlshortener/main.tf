@@ -2,7 +2,7 @@ terraform {
   required_providers {
     urlshortener = {
       source  = "local/urlshortener" 
-      version = "0.0.1"
+      version = ">= 0.0.1" # Accept version 0.0.1 or higher
     }
   }
 }
