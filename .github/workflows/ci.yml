@@ -52,8 +52,8 @@ jobs:
         with:
           terraform_version: "1.14.3"
       - name: Run terraform init
-        working-directory: tf-test
+        working-directory: $GITHUB_WORKSPACE
         run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform init -input=false
       - name: Run terraform apply
-        working-directory: tf-test
+        working-directory: $GITHUB_WORKSPACE
         run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform apply -auto-approve
