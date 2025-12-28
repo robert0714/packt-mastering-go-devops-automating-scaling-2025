@@ -43,12 +43,12 @@ jobs:
           cd $GITHUB_WORKSPACE
           cat <<EOF > cli.hcl
           provider_installation {
-            dev_overrides {
-              "local/urlshortener" = "$GITHUB_WORKSPACE/terraform.d/plugins"
-            }
-            #filesystem_mirror {
-            #  path = "terraform.d/plugins"
+            #dev_overrides {
+            #  "local/urlshortener" = "$GITHUB_WORKSPACE/terraform.d/plugins"
             #}
+            filesystem_mirror {
+              path = "terraform.d/plugins"
+            }
             direct {}
           }
           EOF

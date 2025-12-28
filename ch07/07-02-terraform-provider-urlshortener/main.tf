@@ -2,14 +2,12 @@ terraform {
   required_providers {
     urlshortener = {
       source  = "local/urlshortener" 
-      version = "0.1.0" 
+      version = "0.0.1"
     }
   }
 }
 
 provider "urlshortener" {
-  
-  
 }
 
 # This is the Create and Read test:

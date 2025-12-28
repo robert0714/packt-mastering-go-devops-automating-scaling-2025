@@ -2,7 +2,9 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -16,12 +18,6 @@ import (
 // Ensure provider implements framework.Provider
 var _ provider.Provider = &urlShortenerProvider{}
 
-// urlShortenerClient is a placeholder for your actual client implementation
-type urlShortenerClient struct {
-	APIKey     string
-	HTTPClient *http.Client
-}
-
 // New returns a factory for the provider (used by providerserver).
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
@@ -31,9 +27,20 @@ func New(version string) func() provider.Provider {
 	}
 }
 
+// urlShortenerClient is a placeholder for your actual client implementation
+type urlShortenerClient struct {
+	APIKey     string
+	HTTPClient *http.Client
+}
+
 type urlShortenerProvider struct {
 	version string
 	apiKey  string
+}
+
+// provider-level model mapping (used with tfsdk tags)
+type urlShortenerProviderModel struct {
+	APIKey types.String `tfsdk:"api_key"`
 }
 
 // Metadata returns the provider type name and version.
@@ -56,17 +63,14 @@ func (p *urlShortenerProvider) Schema(_ context.Context, _ provider.SchemaReques
 
 // Resources returns the provider's resources.
 func (p *urlShortenerProvider) Resources(_ context.Context) []func() resource.Resource {
-	return nil
+	return []func() resource.Resource{
+		func() resource.Resource { return &urlShortenerResource{} },
+	}
 }
 
 // DataSources returns the provider's data sources.
 func (p *urlShortenerProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return nil
-}
-
-// provider-level model mapping (used with tfsdk tags)
-type urlShortenerProviderModel struct {
-	APIKey types.String `tfsdk:"api_key"`
 }
 
 // Configure - build a client and make it available to resources/data-sources
@@ -110,4 +114,52 @@ func (p *urlShortenerProvider) Configure(ctx context.Context, req provider.Confi
 	resp.ResourceData = client
 	resp.DataSourceData = client
 	p.apiKey = apiKey
+}
+
+func URLResourceSchema() schema.Schema {
+	return schema.Schema{
+		Attributes: map[string]schema.Attribute{
+			"short_url": schema.StringAttribute{
+				Required:    true,
+				Description: "The shortened URL.",
+			},
+			"long_url": schema.StringAttribute{
+				Required:    true,
+				Description: "The original long URL.",
+			},
+		},
+	}
+}
+
+func CreateShortURL(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data struct {
+		ShortURL string `tfsdk:"short_url"`
+		LongURL  string `tfsdk:"long_url"`
+	}
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	// Call external API to create short URL
+	shortURL, err := CreateShortURLAPI(data.LongURL)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error creating short URL",
+			err.Error(),
+		)
+		return
+	}
+	data.ShortURL = shortURL
+	resp.State.Set(ctx, &data)
+}
+
+// CreateShortURLAPI is a minimal placeholder implementation used by the
+// example provider. Replace this with real API calls in a production
+// implementation. It returns a deterministic pseudo-short URL for the
+// provided long URL.
+func CreateShortURLAPI(longURL string) (string, error) {
+	if longURL == "" {
+		return "", fmt.Errorf("long URL is empty")
+	}
+	// Use a URL-escaped representation of the long URL as a simple
+	// deterministic suffix for the short URL in this example.
+	escaped := url.QueryEscape(longURL)
+	return "https://short.example/" + escaped, nil
 }
