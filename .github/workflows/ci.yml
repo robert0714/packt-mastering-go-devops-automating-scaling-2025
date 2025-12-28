@@ -56,13 +56,21 @@ jobs:
           echo '------------------------------'
           cat cli.hcl
           pwd
+          ls -la $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/
       - name: Install Terraform    
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: "1.14.3"
       - name: Run terraform init
        # working-directory: $GITHUB_WORKSPACE
-        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="./cli.hcl" terraform init -input=false
+        run: |
+          echo '$GITHUB_WORKSPACE'
+          echo $GITHUB_WORKSPACE 
+          echo '------------------------------'
+          ls -la 
+          echo '------------------------------'
+          ls -la $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/
+          TF_LOG=TRACE TF_CLI_CONFIG_FILE="./cli.hcl" terraform init -input=false
       - name: Run terraform apply
        # working-directory: $GITHUB_WORKSPACE
         run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="./cli.hcl" terraform apply -auto-approve
