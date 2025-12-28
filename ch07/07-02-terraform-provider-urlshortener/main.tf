@@ -8,6 +8,7 @@ terraform {
 }
 
 provider "urlshortener" {
+   api_key = "my-secret-api-key"
 }
 
 # This is the Create and Read test:

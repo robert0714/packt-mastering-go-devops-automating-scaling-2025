@@ -1,0 +1,78 @@
+name: 07-03-terraform-provider-urlshortener CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ch07/07-03-terraform-provider-urlshortener/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+      - name: Run go tests
+        run: |
+          cd ./ch07/07-03-terraform-provider-urlshortener
+          go mod tidy  
+          cd internal  
+          go test -v
+  terraform-acceptance:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+      - name: Build provider (linux_amd64)
+        run: |
+          set -e
+          
+          mkdir -p $GITHUB_WORKSPACE/terraform.d/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64
+          cp ./ch07/07-03-terraform-provider-urlshortener/main.tf .
+          cd ./ch07/07-03-terraform-provider-urlshortener
+          go mod tidy  
+          GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/terraform.d/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64/terraform-provider-urlshortener_v0.0.1 .
+          
+          cd $GITHUB_WORKSPACE
+          cat <<EOF > cli.hcl
+          provider_installation {
+            #dev_overrides {
+            #  "local/urlshortener" = "$GITHUB_WORKSPACE/terraform.d/plugins"
+            #}
+            filesystem_mirror {
+              path = "terraform.d/plugins"
+            }
+            direct {}
+          }
+          EOF
+          cat cli.hcl      
+          echo '------------------------------'          
+          pwd
+          ls -la $GITHUB_WORKSPACE/terraform.d/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64/
+          ls -la
+      - name: Install Terraform    
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.14.3"
+      - name: Run terraform init
+       # working-directory: $GITHUB_WORKSPACE
+        run: |          
+          echo '$GITHUB_WORKSPACE'
+          echo $GITHUB_WORKSPACE 
+          echo '------------------------------'
+          ls -la 
+          echo '------------------------------'
+          ls -la $GITHUB_WORKSPACE/terraform.d/plugins/registry.terraform.io/local/urlshortener/0.0.1/linux_amd64/
+          TF_LOG=TRACE TF_CLI_CONFIG_FILE="./cli.hcl" terraform init -input=false
+      - name: Run terraform apply
+       # working-directory: $GITHUB_WORKSPACE
+        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="./cli.hcl" terraform apply -auto-approve

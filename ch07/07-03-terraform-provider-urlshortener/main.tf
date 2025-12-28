@@ -7,7 +7,9 @@ terraform {
   }
 }
 
-provider "urlshortener" {}
+provider "urlshortener" {
+   api_key = "my-secret-api-key"
+}
 
 resource "url_shortener" "example" {
   short_url = "my-url"
