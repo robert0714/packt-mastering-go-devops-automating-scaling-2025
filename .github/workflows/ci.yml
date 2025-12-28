@@ -47,6 +47,9 @@ jobs:
             direct {}
           }
           EOF
+          echo $GITHUB_WORKSPACE
+          cat cli.hcl
+          pwd
       - name: Install Terraform    
         uses: hashicorp/setup-terraform@v2
         with:
