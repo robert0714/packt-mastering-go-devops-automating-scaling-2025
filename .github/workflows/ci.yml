@@ -33,13 +33,17 @@ jobs:
       - name: Build provider (linux_amd64)
         run: |
           set -e
+          echo '$GITHUB_WORKSPACE'
           echo $GITHUB_WORKSPACE 
+          echo '------------------------------'
+          echo '$PWD'
+          echo $PWD
           mkdir -p $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64
           cd ./ch07/07-03-terraform-provider-urlshortener
           go mod tidy  
           GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/terraform-provider-local-urlshortener_v0.0.1 .
           
-          cat <<EOF > cli.hcl
+          cat <<EOF > $GITHUB_WORKSPACE/cli.hcl
           provider_installation {
             dev_overrides {
               "local/urlshortener"   = "$GITHUB_WORKSPACE/plugins"
@@ -56,7 +60,7 @@ jobs:
           terraform_version: "1.14.3"
       - name: Run terraform init
         working-directory: $GITHUB_WORKSPACE
-        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform init -input=false
+        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$GITHUB_WORKSPACE/cli.hcl" terraform init -input=false
       - name: Run terraform apply
         working-directory: $GITHUB_WORKSPACE
-        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$PWD/cli.hcl" terraform apply -auto-approve
+        run: TF_LOG=TRACE TF_CLI_CONFIG_FILE="$GITHUB_WORKSPACE/cli.hcl" terraform apply -auto-approve
