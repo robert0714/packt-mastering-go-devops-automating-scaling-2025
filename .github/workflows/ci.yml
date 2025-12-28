@@ -42,8 +42,8 @@ jobs:
           cd ./ch07/07-03-terraform-provider-urlshortener
           go mod tidy  
           GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/terraform-provider-local-urlshortener_v0.0.1 .
-          
-          cat <<EOF > $GITHUB_WORKSPACE/cli.hcl
+          cd $GITHUB_WORKSPACE
+          cat <<EOF > cli.hcl
           provider_installation {
             dev_overrides {
               "local/urlshortener"   = "$GITHUB_WORKSPACE/plugins"
@@ -51,7 +51,9 @@ jobs:
             direct {}
           }
           EOF
-          echo $GITHUB_WORKSPACE
+          echo '$GITHUB_WORKSPACE'
+          echo $GITHUB_WORKSPACE 
+          echo '------------------------------'
           cat cli.hcl
           pwd
       - name: Install Terraform    
