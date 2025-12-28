@@ -9,15 +9,12 @@ terraform {
 
 provider "urlshortener" {
   
-  
 }
 
-# This is the Create and Read test:
-resource "urlshortener" "example" {
+
+provider "urlshortener" {
+  api_key = "my-secret-api-key"
+}
+resource "urlshortener_short_url" "example" {
   long_url = "https://example.com"
-}
-
-# This is the Update test:
-resource "urlshortener" "example_update" {
-  long_url = "https://example2.com"
 }

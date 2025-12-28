@@ -12,12 +12,10 @@ provider "urlshortener" {
   
 }
 
-# This is the Create and Read test:
-resource "urlshortener" "example" {
-  long_url = "https://example.com"
-}
-
-# This is the Update test:
-resource "urlshortener" "example_update" {
-  long_url = "https://example2.com"
+resource "url_shortener" "example" {
+  short_url = "my-url"
+  long_url  = "https://example.com"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
