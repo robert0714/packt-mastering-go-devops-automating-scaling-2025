@@ -41,12 +41,12 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64
           cd ./ch07/07-03-terraform-provider-urlshortener
           go mod tidy  
-          GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/plugins/providers/local/urlshortener/0.0.1/linux_amd64/terraform-provider-local-urlshortener_v0.0.1 .
+          GOOS=linux GOARCH=amd64 go build -o $GITHUB_WORKSPACE/terraform.d/plugins/providers/local/urlshortener/0.0.1/linux_amd64/terraform-provider-urlshortener .
           cd $GITHUB_WORKSPACE
           cat <<EOF > cli.hcl
           provider_installation {
             dev_overrides {
-              "local/urlshortener"   = "$GITHUB_WORKSPACE/plugins"
+              "local/urlshortener"   = "$GITHUB_WORKSPACE/terraform.d/plugins"
             }
             direct {}
           }
@@ -64,6 +64,7 @@ jobs:
       - name: Run terraform init
        # working-directory: $GITHUB_WORKSPACE
         run: |
+          cp ./ch07/07-03-terraform-provider-urlshortener/main.tf .
           echo '$GITHUB_WORKSPACE'
           echo $GITHUB_WORKSPACE 
           echo '------------------------------'
