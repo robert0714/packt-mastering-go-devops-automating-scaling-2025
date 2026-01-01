@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  url-shortener-lambda
+
+  Sample SAM Template for url-shortener-lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 128
+
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  UrlShortenerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      CodeUri: url-shortener/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+      - x86_64
+      # --- 新增 Policies 讓 Lambda 可以讀取 S3 檔案 ---
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref MyInputBucket
+      Events:
+        CatchGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: GET
+        CatchPost:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: POST
+        # --- 新增 S3 Trigger ---
+        S3Trigger:
+          Type: S3
+          Properties:
+            Bucket: !Ref MyInputBucket # 參照上面建立的 Bucket
+            Events: s3:ObjectCreated:* # 監聽所有新增物件事件
+            # 如果只想監聽特定資料夾或附檔名，可以取消下方註解：
+            # Filter:
+            #   S3Key:
+            #     Rules:
+            #       - Name: suffix
+            #         Value: .json
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          PARAM1: VALUE
+          # 可以把 Bucket 名稱傳給 Lambda 程式碼使用
+          BUCKET_NAME: !Ref MyInputBucket
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  UrlShortenerAPI:
+    Description: API Gateway endpoint URL for Prod environment for First 
+      Function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/hello/"
+  UrlShortenerFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt UrlShortenerFunction.Arn
+  UrlShortenerFunctionIamRole:
+    Description: Implicit IAM Role created for Url Shortener function
+    Value: !GetAtt UrlShortenerFunctionIamRole.Arn

@@ -122,3 +122,5 @@ tf-test/.terraform/
 # Terraform state files for local tests
 tf-test/*.tfstate
 tf-test/*.tfstate.backup
+
+.aws-sam/
